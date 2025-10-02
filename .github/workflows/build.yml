@@ -1,0 +1,37 @@
+name: Build C# App
+
+on:
+  push:
+    paths:
+      - '**.cs'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Create project
+        run: dotnet new console -n MijnApp
+
+      - name: Replace Program.cs
+        run: |
+          copy Program.cs MijnApp\Program.cs
+
+      - name: Build project
+        run: |
+          cd MijnApp
+          dotnet build --configuration Release
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: exe-output
+          path: MijnApp\bin\Release\net8.0\MijnApp.exe
